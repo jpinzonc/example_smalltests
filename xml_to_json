@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Jul 29 10:55:08 2017
+
+@author: jpinzon
+"""
+import os
+from time import time
+
+#Change your path to working directory
+os.chdir("/Users/jpinzon/Google Drive/01_GitHub/senators_vote")
+os.listdir()
+
+
+from xml.dom import minidom
+import simplejson as json
+def parse_element(element):
+    dict_data = dict()
+    if element.nodeType == element.TEXT_NODE:
+        dict_data['data'] = element.data
+    if element.nodeType not in [element.TEXT_NODE, element.DOCUMENT_NODE, 
+                                element.DOCUMENT_TYPE_NODE]:
+        for item in element.attributes.items():
+            dict_data[item[0]] = item[1]
+    if element.nodeType not in [element.TEXT_NODE, element.DOCUMENT_TYPE_NODE]:
+        for child in element.childNodes:
+            child_name, child_dict = parse_element(child)
+            if child_name in dict_data:
+                try:
+                    dict_data[child_name].append(child_dict)
+                except AttributeError:
+                    dict_data[child_name] = [dict_data[child_name], child_dict]
+            else:
+                dict_data[child_name] = child_dict 
+    return element.nodeName, dict_data
+
+if __name__ == '__main__':
+    dom = minidom.parse('congress_115_1_vote_172.xml')
+    f = open('data.json', 'w')
+    f.write(json.dumps(parse_element(dom), sort_keys=True, indent=4))
+    f.close()
+    
+a = open('data.json', 'w')
+type(a)
+
+import pandas as pd
+
+from lxml import objectify
+root = objectify.fromstring("""
+ <root xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <a attr1="foo" attr2="bar">1</a>
+   <a>1.2</a>
+   <b>1</b>
+   <b>true</b>
+   <c>what?</c>
+   <d xsi:nil="true"/>
+ </root>
+ """)
