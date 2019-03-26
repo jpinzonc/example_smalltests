@@ -1,4 +1,4 @@
-# Example, small tests, and stakoverflow answers
+# Examples, small tests, and stakoverflow answers
 
 ## PURPOSE
 
